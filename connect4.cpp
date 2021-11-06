@@ -1,5 +1,9 @@
 #include <iostream>
 
+#define GRID_WIDTH 7
+#define GRID_HEIGHT 6
+
+
 char grid[6][7];
 	
 void setup_grid();
@@ -103,23 +107,6 @@ void player_turn(char player) {
 
 bool four_in_a_row(char player) {
 
-	/*
-	0 0 0 0 0 0 0
-	0 0 0 0 0 0 0
-	0 0 0 0 0 0 0
-	0 0 0 0 0 0 0
-	0 0 0 0 0 0 0
-	0 0 0 0 0 0 0
-
-	row_length - connect_length + 1
-	column_length - connect_length + 1
-
-	7 - 4 + 1 = 4
-	6 - 4 + 1 = 3
-
-
-	*/
-
 	// Horizontal check:
 	for(int i = 0; i < 6; i++)
 		for(int j = 0; j < 4; j++)
@@ -135,40 +122,17 @@ bool four_in_a_row(char player) {
 			if(grid[i][j] == player && grid[i+1][j] == player)
 				if(grid[i+2][j] == player && grid[i+3][j] == player)
 					return true;
-				
-	// Diagonal check:
-	for(int y = 0; y < 3; y++) {
-		for(int x = 0; x < 7; x++) {
-			if(grid[y][x] == player) {
 
-				// Can this cause negative indexes to be used?
-
-				// Diagonally left:
-				if(grid[y+1][x-1] == player) {
-					if(grid[y+2][x-2] == player)
-						if(grid[y+3][x-3] == player)
-							return true;
-				}
-				
-				// Diagonally right
-				if(grid[y+1][x+1] == player) {
-					if(grid[y+2][x+2] == player)
-						if(grid[y+3][x+3] == player)
-							return true;
-				}
+	for (int y = 0; y < GRID_HEIGHT - 3; y++) {
+		for (int x = 0; x < GRID_WIDTH - 3; x++) {
+			if ((grid[y    ][x + 3] == player && grid[y + 1][x + 2] == player &&
+				grid[y + 2][x + 1] == player && grid[y + 3][x    ] == player) ||
+				(grid[y    ][x   ] == player && grid[y + 1][x + 1] == player &&
+				grid[y + 2][x + 2] == player && grid[y + 3][x + 3] == player)) {
+				return true;
 			}
 		}
 	}
-
-	/*
-	0 0 0 0 0 0 0
-	0 0 0 0 0 0 0
-	0 0 0 0 0 0 0
-	0 0 0 0 0 0 0
-	0 0 0 0 0 0 0
-	0 0 0 0 0 0 0
-
-	*/
 
 	return false;
 }
