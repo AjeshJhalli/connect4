@@ -4,7 +4,7 @@
 #define GRID_HEIGHT 6
 
 
-char grid[6][7];
+char grid[GRID_WIDTH * GRID_HEIGHT];
 	
 void setup_grid();
 void display_grid();
@@ -50,25 +50,24 @@ int main() {
 }
 
 void setup_grid() {
-	for(int i = 0; i < 6; i++)
-		for(int j = 0; j < 7; j++)
-			grid[i][j] = '0';
+	for(int i = 0; i < GRID_WIDTH * GRID_HEIGHT; i++)
+		grid[i] = '0';
 }
 
 void display_grid() {
 
-	std::cout << std::endl;
-	std::cout << "Enter a column number (1-7) to put a piece into that column." << std::endl;
-	std::cout << std::endl;
+	std::cout << "\nEnter a column number (1-7) to put a piece into that column.\n\n";
 	
-	for(int i = 0; i < 6; i++) {
-		for(int j = 0; j < 7; j++)
-			std::cout << grid[i][j] << ' ';
-	
-		std::cout << std::endl;
+	for(int y = 0; y < GRID_HEIGHT; y++) {
+		for(int x = 0; x < GRID_WIDTH; x++) {
+
+			std::cout << grid[y * GRID_WIDTH + x] << ' ';
+		}
+			
+		std::cout << '\n';
 	}
 	
-	std::cout << std::endl;
+	std::cout << '\n';
 }
 
 void player_turn(char player) {
@@ -90,16 +89,16 @@ void player_turn(char player) {
 			continue;
 		}
 
-		if(grid[0][column_number] != '0') {
+		if(grid[column_number] != '0') {
 			std::cout << "Column is full." << std::endl;
 			valid = false;
 		}
 	}
 	while(!valid);
 
-	for (int i = 5; i > -1; i--) {
-		if (grid[i][column_number] == '0') {
-			grid[i][column_number] = player;
+	for (int y = 5; y > -1; y--) {
+		if (grid[y * GRID_WIDTH + column_number] == '0') {
+			grid[y * GRID_WIDTH + column_number] = player;
 			break;
 		}
 	}
@@ -108,27 +107,36 @@ void player_turn(char player) {
 bool four_in_a_row(char player) {
 
 	// Horizontal check:
-	for(int i = 0; i < 6; i++)
-		for(int j = 0; j < 4; j++)
-			if(grid[i][j] == player &&
-			   	grid[i][j+1] == player &&
-			   	grid[i][j+2] == player &&
-			   	grid[i][j+3] == player)
+	for(int y = 0; y < 6; y++)
+		for(int x = 0; x < 4; x++)
+			if(grid[y * GRID_WIDTH + x] == player &&
+			   	grid[y * GRID_WIDTH + x + 1] == player &&
+			   	grid[y * GRID_WIDTH + x + 2] == player &&
+			   	grid[y * GRID_WIDTH + x + 3] == player)
 				return true;
 
-	// Vertical check:	
-	for(int j = 0; j < 7; j++)
-		for(int i = 0; i < 3; i++)
-			if(grid[i][j] == player && grid[i+1][j] == player)
-				if(grid[i+2][j] == player && grid[i+3][j] == player)
-					return true;
+	// Vertical check:
+	for(int y = 0; y < 7; y++)
+		for(int x = 0; x < 3; x++)
+			if(grid[y * GRID_WIDTH + x] == player &&
+				grid[(y+1) * GRID_WIDTH + x] == player &&
+				grid[(y+2) * GRID_WIDTH + x] == player &&
+				grid[(y+3) * GRID_WIDTH + x] == player)
+				return true;
 
+	// Diagonal checks
 	for (int y = 0; y < GRID_HEIGHT - 3; y++) {
 		for (int x = 0; x < GRID_WIDTH - 3; x++) {
-			if ((grid[y    ][x + 3] == player && grid[y + 1][x + 2] == player &&
-				grid[y + 2][x + 1] == player && grid[y + 3][x    ] == player) ||
-				(grid[y    ][x   ] == player && grid[y + 1][x + 1] == player &&
-				grid[y + 2][x + 2] == player && grid[y + 3][x + 3] == player)) {
+			if (
+				(grid[y * GRID_WIDTH + x + 3] == player &&
+				grid[(y + 1) * GRID_WIDTH + x + 2] == player &&
+				grid[(y + 2) * GRID_WIDTH + x + 1] == player &&
+				grid[(y + 3) * GRID_WIDTH + x] == player)
+				||
+				(grid[y * GRID_WIDTH + x] == player &&
+				grid[(y + 1) * GRID_WIDTH + x + 1] == player &&
+				grid[(y + 2) * GRID_WIDTH + x + 2] == player &&
+				grid[(y + 3) * GRID_WIDTH + x + 3] == player)) {
 				return true;
 			}
 		}
@@ -138,11 +146,12 @@ bool four_in_a_row(char player) {
 }
 
 bool grid_is_full() {
-	for(int y = 0; y < 6; y++)
-		for(int x = 0; x < 7; x++)
-			if(grid[y][x] == '0')
-				return false;
-	
+	// If top row is full, then grid is full
+	for (int x = 0; x < GRID_WIDTH; x++) {
+		if (grid[x] == '0') {
+			return false;
+		}
+	}
 	return true;
 }
 
