@@ -80,6 +80,15 @@ void player_turn(char player) {
 		std::cout << "Player " << player << ": ";
 
 		std::cin >> column_number;
+
+		if (std::cin.fail())
+		{
+			std::cout << "That was not a number" << std::endl;
+			valid = false;
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			continue;
+		}
 		
 		column_number--;
 		
