@@ -1,7 +1,7 @@
 #include <iostream>
 
-#define GRID_WIDTH 7
-#define GRID_HEIGHT 6
+#define GRID_WIDTH 8
+#define GRID_HEIGHT 8
 
 char grid[GRID_WIDTH * GRID_HEIGHT];
 	
@@ -58,7 +58,23 @@ void setup_grid()
 
 void display_grid()
 {
-	std::cout << "\nEnter a column number (1-7) to put a piece into that column.\n\n";
+	std::cout << "\nEnter a column number to put a piece into that column.\n\n";
+
+	if (GRID_WIDTH < 10)
+	{
+		for(int x = 1; x < GRID_WIDTH + 1; x++)
+		{
+			std::cout << x << " ";
+		}
+
+		std::cout << '\n';
+		for(int x = 0; x < GRID_WIDTH * 2 - 1; x++)
+		{
+			std::cout << "_";
+		}
+	}
+
+	std::cout << '\n';
 	
 	for(int y = 0; y < GRID_HEIGHT; y++)
 	{
@@ -96,9 +112,9 @@ void player_turn(char player)
 		
 		column_number--;
 		
-		if((column_number < 0) || (column_number > 6))
+		if((column_number < 0) || (column_number > GRID_WIDTH - 1))
 		{
-			std::cout << "That number was not between 1 and 7" << std::endl;
+			std::cout << "That column does not exist" << std::endl;
 			valid = false;
 			continue;
 		}
@@ -111,11 +127,13 @@ void player_turn(char player)
 	}
 	while(!valid);
 
-	for (int y = 5; y > -1; y--)
+	for (int y = GRID_HEIGHT - 1; y > -1; y--)
 	{
-		if (grid[y * GRID_WIDTH + column_number] == '0')
+		const int EMPTY_SPACE = y * GRID_WIDTH + column_number;
+
+		if (grid[EMPTY_SPACE] == '0')
 		{
-			grid[y * GRID_WIDTH + column_number] = player;
+			grid[EMPTY_SPACE] = player;
 			break;
 		}
 	}
